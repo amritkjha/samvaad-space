@@ -7,7 +7,7 @@ const NewCommunityModal = ({ setCommunityModal }) => {
     const name = e.target.name.value;
     const community_id = e.target.community_id.value;
     const description = e.target.description.value;
-    const author = localStorage.getItem('accessToken');
+    const author = localStorage.getItem('userName');
     axios
       .post('http://127.0.0.1:5000/api/community/create-community', {name: name, community_id: community_id, author: author, description: description})
       .then((res) => {

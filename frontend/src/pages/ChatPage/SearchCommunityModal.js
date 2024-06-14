@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 const SearchCommunityModal = ({ setSearchCommunityModal }) => {
     const [ data, setData ] = useState([])
     const handleCommunitySearch = (e) => {
-        e.target.value.length > 3 ? axios
+        e.target.value.length > 0 ? axios
         .post('http://127.0.0.1:5000/api/community/community-list', {searchQuery: e.target.value})
         .then((res) => {
           console.log('community list', res);
