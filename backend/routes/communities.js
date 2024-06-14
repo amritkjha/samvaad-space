@@ -7,9 +7,10 @@ router.post('/create-community', async(req, res) => {
     const name = req.body.name;
     const description = req.body.description;
     const author = req.body.author;
-    const community_id = req.body.community_id || `${author}-community${(Math.random()*10)+1}`;
+    const community_id = req.body.community_id || `${author}-community-${Date.now()}`;
     try {
         let community = await Community.findOne({community_id});
+        let user = await User.findOne({username: author});
         if(community) {
             return res.status(400).json({message: 'Community already exists. Try with a different Community ID'});
         }
@@ -18,7 +19,9 @@ router.post('/create-community', async(req, res) => {
             description,
             author,
             community_id,
-        }); 
+        });
+        user.communities.push(community.community_id);
+        await User.findOneAndUpdate({username: author}, { $set: user });
         // console.log('c c ', community);
         return res.status(201).json({message: 'Community created successfully.'});
     } catch (error) {
@@ -47,13 +50,56 @@ router.post('/join-community', async(req, res) => {
     }
 })
 
+router.post('/leave-community', async(req, res) => {
+    console.log('api start');
+    const member_id = await req.body.member_id;
+    const community_id = await req.body.community_id;
+    console.log('ids', member_id, community_id);
+    try {
+        let community = await Community.findOne({community_id});console.log('comm found ', community);
+        let member = await User.findOne({username: member_id});console.log('mem resp ', member);
+        if(!community) {
+            return res.status(400).json({message: 'No such community exists.'})
+        }
+        community.members.filter((val) => {
+            if(val!==member_id)return val;
+        })
+        member.communities.filter((val) => {
+            if(val!==community_id)return val;
+        })
+        console.log('updated: ', community, member);
+        await User.findOneAndUpdate({username: member_id}, { $set: member });
+        await Community.findOneAndUpdate({community_id}, { $set: community });
+        return res.status(200).json({message: 'Community left successfully.'})
+    } catch (error) {
+        res.status(500).json({message: 'Internal server error.'})
+    }
+})
+
 router.post('/community-list', async(req, res) => {
     try {
-        const community_list = await Community.find();
+        let searchQuery = req.body.searchQuery;
+        let community_list = await Community.find({name: {$regex: `^${searchQuery}`}});
         if(!community_list) {
-            res.status(404).json({message: 'No communities exist currently.'})
+            return res.status(400).json({message: 'No communities exist currently.'})
         }
-        res.status(200).json({community_list, message: 'All communities fetched.'})
+        res.status(200).json({community_list, message: `All communities fetched.`})
+    } catch (error) {
+        res.status(500).json({message: 'Internal server error.'})
+    }
+})
+
+router.post('/communities-joined', async(req, res) => {
+    try {
+        console.log('api start');
+        const username = req.body.username;console.log(username);
+        let user = await User.findOne({username});console.log('user', user);
+        let community_list = []
+        user.communities.map(async(comm) => {
+            const newComm = await Community.findOne({name: comm});console.log('items ', comm, newComm);
+            community_list.push(newComm);
+        });console.log('list', community_list);
+        res.status(200).json({community_list, message: `All communities of ${username} fetched.`})
     } catch (error) {
         res.status(500).json({message: 'Internal server error.'})
     }

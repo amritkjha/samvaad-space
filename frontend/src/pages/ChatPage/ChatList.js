@@ -43,9 +43,9 @@ const ChatList = ({setRoom}) => {
   const [ data, setData ] = useState([])
   useEffect(() => {
     axios
-      .post('http://127.0.0.1:5000/api/community/community-list')
+      .post('http://127.0.0.1:5000/api/community/communities-joined', {username: localStorage.getItem('userName')})
       .then((res) => {
-        console.log('community list', res.data.community_list[0].name);
+        console.log('community list', res.data.community_list);
         setData(res.data.community_list);
       })
       .catch((error) => {
@@ -54,7 +54,7 @@ const ChatList = ({setRoom}) => {
   }, [])
   return (
     <div className='p-5 h-full'>
-      <div className='h-[70%] overflow-y-scroll no-scrollbar'><ul className=''>
+      <div className='h-[70%] overflow-y-scroll'><ul className=''>
         {data?.map((person)=>{return (<li className='flex'>
           <div className='bg-[orange] rounded-full p-3 my-2'><span className='text-sm'>{person?.initials || 'NC'}</span></div>
           <div className='mx-3 cursor-pointer' onClick={()=>setRoom(person?.community_id)}>

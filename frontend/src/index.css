@@ -14,11 +14,13 @@ code {
 
 ::-webkit-scrollbar {
   /* display: none; */
+  visibility: hidden;
   width: 5px;
 }
 
 ::-webkit-scrollbar:hover {
   /* display: none; */
+  visibility: visible;
   width: 8px;
 }
 

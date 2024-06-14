@@ -5,7 +5,7 @@ const SearchCommunityModal = ({ setSearchCommunityModal }) => {
     const [ data, setData ] = useState([])
     const handleCommunitySearch = (e) => {
         e.target.value.length > 3 ? axios
-        .post('http://127.0.0.1:5000/api/community/community-list')
+        .post('http://127.0.0.1:5000/api/community/community-list', {searchQuery: e.target.value})
         .then((res) => {
           console.log('community list', res);
           setData(res.data.community_list);
@@ -33,10 +33,10 @@ const SearchCommunityModal = ({ setSearchCommunityModal }) => {
       id="authentication-modal"
       tabindex="-1"
       aria-hidden="true"
-      class="backdrop-blur overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+      class="backdrop-blur overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center h-full w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
     >
       <div class="relative p-4 w-full max-w-md max-h-full mx-auto h-full">
-        <div class="relative bg-[#005f3f]/[0.73] rounded-lg shadow dark:bg-[#005f3f]-700 my-auto">
+        <div class="relative h-[50%] bg-[#005f3f]/[0.73] rounded-lg shadow dark:bg-[#005f3f]-700 my-auto">
           <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold dark:text-white">
               Join a Community
@@ -64,16 +64,16 @@ const SearchCommunityModal = ({ setSearchCommunityModal }) => {
               <span class="sr-only">Close modal</span>
             </button>
           </div>
-          <div class="p-4 md:p-5">
-            <form class="space-y-4" action="#">
-              <div>
+          <div class="p-4 md:p-5 h-full">
+            <form class="space-y-4 h-full" action="#">
+              <div className='h-full'>
                 <label
                   for="email"
                   class="block mb-2 text-sm font-medium dark:text-white"
                 >
                   Name / CommunityID
                 </label>
-                <div className='bg-gray-50 border border-gray-300 rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white'>
+                <div className='bg-gray-50 h-[60%] border border-gray-300 rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white'>
                     <input
                     type="email"
                     name="email"
@@ -83,10 +83,10 @@ const SearchCommunityModal = ({ setSearchCommunityModal }) => {
                     onChange={handleCommunitySearch}
                     required
                     />
-                    {data?.map((community)=>{return (<div className='text-sm text-black w-full p-2.5 flex'>
+                    <div className={`overflow-y-scroll max-h-[60%] ${data.length>0?'visible':'invisible'}`}>{data?.map((community)=>{return (<div className='text-sm text-black w-full p-2.5 flex'>
                         <p>{community?.name} - @{community?.community_id}</p>
                         <p className='ms-auto' role='button' id={community?.community_id} onClick={handleCommunityJoin}>+Join</p>
-                    </div>)})}
+                    </div>)})}</div>
                 </div>
               </div>
               {/* <div>
