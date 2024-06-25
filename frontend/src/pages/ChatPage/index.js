@@ -11,9 +11,9 @@ const ChatPage = () => {
     else navigate('/get-started');
   }, [])
   return (
-    <div className='flex divide-x h-full'>
-      <div className='w-1/4 h-full'><ChatList setRoom={setRoom} /></div>
-      <div className='w-3/4 h-full'><ChatWindow room={room} /></div>
+    <div className='flex md:divide-x h-full'>
+      <div className={`h-full ${room?'hidden w-0':'w-full'} md:w-1/4 md:block`}><ChatList setRoom={setRoom} /></div>
+      <div className={`h-full ${room?'w-full':'hidden w-0'} md:w-3/4 md:block`}><ChatWindow room={room} setRoom={setRoom} /></div>
     </div>
   )
 }

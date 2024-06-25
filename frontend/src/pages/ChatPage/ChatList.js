@@ -57,9 +57,9 @@ const ChatList = ({setRoom}) => {
       <div className='h-[70%] overflow-y-scroll'><ul className=''>
         {data?.map((person)=>{return (<li className='flex'>
           <div className='bg-[orange] rounded-full p-3 my-2'><span className='text-sm'>{person?.initials || 'NC'}</span></div>
-          <div className='mx-3 cursor-pointer' onClick={()=>setRoom(person?.community_id)}>
-            <p className='text-sm font-bold'>{person?.name?.substring(0, 12)}</p>
-            <p className='text-xs'>{`${person?.description?.substring(0, 12)}...`}</p>
+          <div className='mx-3 cursor-pointer w-full' onClick={()=>setRoom(person?.community_id)}>
+            <p className='text-sm font-bold'>{person?.name?.substr(0, 20)}</p>
+            <p className='text-xs'>{`${person?.description?.substr(0, 27)}`}</p>
           </div>
         </li>)})}
       </ul></div>
