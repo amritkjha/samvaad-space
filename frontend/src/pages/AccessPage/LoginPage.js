@@ -33,6 +33,7 @@ const LoginPage = () => {
         </div>
         <div className='flex'><button type='submit' className='bg-amber-300 rounded text-white p-1 ml-auto'>Log In</button></div>
       </form>
+      <p className='md:hidden absolute'>Swipe for SignupPage <span className='text-3xl'>→</span></p>
     </div>
   )
 }

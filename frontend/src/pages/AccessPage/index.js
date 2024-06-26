@@ -10,9 +10,9 @@ const AccessPage = () => {
     else navigate('/');
   }, [])
   return (
-    <div className='flex divide-x h-full py-5'>
-      <div className='w-1/2'><LoginPage /></div>
-      <div className='w-1/2'><SignupPage /></div>
+    <div className='flex md:divide-x h-full py-5 overflow-x-scroll'>
+      <div className='w-full px-[15%] md:px-3 md:w-1/2'><LoginPage /></div>
+      <div className='w-full px-[15%] md:px-3 md:w-1/2'><SignupPage /></div>
     </div>
   )
 }
