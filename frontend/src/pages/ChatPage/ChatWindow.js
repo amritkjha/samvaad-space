@@ -24,8 +24,12 @@ const ChatWindow = ({room, setRoom}) => {
     socket.emit('joinRoom', room);
 
     socket.on('chatMessage',  (message) => {
-        setMessages(prevMessages => [...prevMessages, message]);
-      })
+      setMessages(prevMessages => [...prevMessages, message]);
+    })
+      
+    socket.on('previousMessages',  (previousMessages) => {
+      setMessages(previousMessages);
+    })
     return () => {
       socket.emit('leaveRoom', room);
       socket.disconnect()
@@ -35,8 +39,12 @@ const ChatWindow = ({room, setRoom}) => {
   const handleMessageSend = (e) => {
     e.preventDefault();
     const message = e?.target?.message?.value;
-    console.log('sent message', message);
-    socket.emit('chatMessage', message);
+    const newMessage = {
+      username: localStorage.getItem('userName'),
+      message,
+      timestamp: new Date(),
+    }
+    socket.emit('chatMessage', {room, ...newMessage});
     setMessage('');
   }
 
@@ -66,7 +74,7 @@ const ChatWindow = ({room, setRoom}) => {
           <span className='text-3xl' role='button' onClick={()=>setRoom('')}>{'<'}</span><h3 className='text-2xl ms-2'>{room}</h3>
           <button className='ms-auto rounded px-3 my-auto bg-[red]' onClick={handleExitCommunity}>Exit</button>
         </div>}
-        {messages?.map((msg)=>{return (<div className={`${msg?.sender=='Self'?`bg-[red] ml-auto rounded-l-lg`:`bg-[green] mr-auto rounded-r-lg`} w-fit px-2 py-1`}>{msg}</div>)})}
+        {messages?.map((msg)=>{return (<div className={`${msg?.username==localStorage.getItem('userName')?`bg-[red] ml-auto rounded-l-lg`:`bg-[green] mr-auto rounded-r-lg`} w-fit px-2 py-1`}>{msg.message}</div>)})}
       </div>
       {room &&<form className='flex h-[7%]' onSubmit={handleMessageSend}>
         <input type='text' name='message' className='sticky w-[81%] md:w-[91%] rounded mx-auto px-2 text-black' placeholder='Enter a message to send' value={message} onChange={handleMessageChange} />

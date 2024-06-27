@@ -2,7 +2,8 @@ const express = require('express');
 const connectToDB = require('./db');
 var cors = require('cors')
 const socketio = require('socket.io')
-const http = require('http')
+const http = require('http');
+const Message = require('./models/Message');
 
 connectToDB();
 const app = express()
@@ -15,9 +16,11 @@ const io = socketio(server, {
 
 io.on('connection', (socket) => {
     // console.log("Client connected.");
-    socket.on('joinRoom', (room) => {
+    socket.on('joinRoom', async(room) => {
         socket.join(room);
         console.log(`Client joined ${room} room.`);
+        const previousMessages = await Message.find({community_id: room});
+        socket.emit('previousMessages', previousMessages);
     })
 
     socket.on('leaveRoom', (room) => {
@@ -25,8 +28,15 @@ io.on('connection', (socket) => {
         console.log(`Client left ${room} room.`);
     })
 
-    socket.on('chatMessage', (message) => {
-        io.emit('chatMessage', message)
+    socket.on('chatMessage', async({room, username, message, timestamp}) => {
+        const newMessage = new Message({
+            community_id : room,
+            username,
+            message,
+            timestamp
+        })
+        await newMessage.save();
+        io.to(room).emit('chatMessage', newMessage)
     })
     socket.on('disconnect', () => {
         console.log("Client disconnected.");
